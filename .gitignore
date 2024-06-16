@@ -1,0 +1,30 @@
+# Operating system files
+.DS_Store
+
+# macOS metadata files
+*.DS_Store
+
+# Logs
+*.log
+
+# IDE and editor files
+.idea/
+.vscode/
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Config files
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+tmp/
+temp/
+
+# Logs
+logs/
+*.log

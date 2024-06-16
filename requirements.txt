@@ -1,0 +1,13 @@
+requests
+beautifulsoup4
+yfinance
+matplotlib
+pytz
+email
+http.client
+json
+smtplib
+datetime
+time
+random
+io
