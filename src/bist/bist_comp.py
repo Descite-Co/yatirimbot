@@ -54,7 +54,7 @@ def bist_comp():
     plt.savefig(image_stream, format='png')
     image_stream.seek(0)
 
-    subject = "BIST100 - BIST30 Karşılaştırması #crypto ##crypto"
+    subject = "BIST100 - BIST30 Karşılaştırması"
     body = f"""🔴 BIST100 - BIST30 Karşılaştırması 👇
 
 #BIST30

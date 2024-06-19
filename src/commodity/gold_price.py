@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 from src.email_utils import send_email
 import yfinance as yf
 
- # TODO: Error
 
 def gold_price():
     conn = http.client.HTTPSConnection("api.collectapi.com")
@@ -60,7 +59,7 @@ def gold_price():
     image_stream.seek(0)
 
     # E-posta oluşturma işlemi
-    subject = f"🔴 Altın Fiyatları {day} {turkish_month} #crypto"
+    subject = f"🔴 Altın Fiyatları {day} {turkish_month}"
     body = "🔴 Altın Fiyatları:\n\n"
     for item in parsed_data["result"]:
         if item["name"] in ["Gram Altın", "ONS Altın", "Çeyrek Altın"]:

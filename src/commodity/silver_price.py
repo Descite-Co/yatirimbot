@@ -1,60 +1,51 @@
 from io import BytesIO
-import requests
+import yfinance as yf
 from matplotlib import pyplot as plt
 from src.email_utils import send_email
-import yfinance as yf
 
-# TODO: Grafik çalışıyo fiyat çalışmıyo
+def get_silver_data():
+    silver = yf.Ticker('SI=F')
+    return silver.history(period='max')
 
-def get_data_cur(url):
-    headers = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.json()
+def plot_silver_data(silver_data):
+    plt.figure(figsize=(12, 6))
+    plt.plot(silver_data['Close'], label='Gümüş Son Fiyat ($)')
+    plt.title('Tarihsel Gümüş Fiyatları')
+    plt.xlabel('Tarih')
+    plt.ylabel('Fiyat ($)')  # Dolar cinsinden fiyatlar
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    return plt
+
+def calculate_daily_change(silver_data):
+    if len(silver_data) > 1:
+        last_close = silver_data['Close'].iloc[-1]
+        prev_close = silver_data['Close'].iloc[-2]
+        daily_change_percent = (last_close - prev_close) / prev_close * 100
+        return daily_change_percent
     else:
-        return None
+        return 0  # Eğer yeterli veri yoksa, değişim 0 olarak kabul edilebilir
 
 def silver():
-    # Gümüş verilerini al
-    json_data = get_data_cur('https://api.genelpara.com/embed/para-birimleri.json')
+    silver_data = get_silver_data()
+    if not silver_data.empty:
+        last_price = silver_data['Close'].iloc[-1]
+        daily_change = calculate_daily_change(silver_data)
 
-    # E-posta için içerik oluştur
-    if json_data:
-        data = json_data.get('GAG')
-        if data:
-            email_body = "🔴 #Gümüş:\n"
-            email_body += f'Fiyat: ₺{data["satis"]}\nDeğişim: {data["degisim"]}%\n'
+        email_body = "🔴 #Gümüş:\n"
+        email_body += f'Son Fiyat: ${last_price:.2f}\nGünlük Değişim: {daily_change:.2f}%\n'
 
-            silver = yf.Ticker('SI=F')
-            hist_data = silver.history(period='max')
+        plt = plot_silver_data(silver_data)
+        image_stream = BytesIO()
+        plt.savefig(image_stream, format='png')
+        plt.close()
+        image_stream.seek(0)
 
-            # Plot historical prices
-            plt.figure(figsize=(12, 6))
-            plt.plot(hist_data['Close'], label='Son Fiyat')
-            plt.title('Gümüş Dolar Grafiği')
-            plt.xlabel('')
-            plt.ylabel('Fiyat')
-            plt.grid(True)
-            plt.legend()
-            plt.xticks(rotation=45)
-            plt.tight_layout()
-
-            # Save the plot as a BytesIO object
-            image_stream = BytesIO()
-            plt.savefig(image_stream, format='png')  # Save the plot as PNG image to the BytesIO object
-            image_stream.seek(0)
-
-            # E-posta gönder
-            send_email("Güncel Gümüş Fiyatları #crypto", email_body, image_stream)
-            #print(email_body)
-
-        else:
-            print('Gümüş verisi bulunamadı.')
+        send_email("Güncel Gümüş Fiyatları #crypto", email_body, image_stream)
     else:
-        print("Veri alınamadı.")
+        print('Gümüş verisi bulunamadı.')
 
 if __name__ == "__main__":
     silver()
