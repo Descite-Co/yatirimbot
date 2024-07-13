@@ -26,7 +26,7 @@ def send_email(subject, body, image_stream=None):
 
     msg = MIMEMultipart()
     msg["From"] = EMAIL
-    msg["To"] = "logrissoitottu-2990@yopmail.com"  # Recipient address
+    msg["To"] = ""  # Recipient address
     msg["Subject"] = subject
 
     msg.attach(MIMEText(body, "plain"))
