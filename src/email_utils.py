@@ -18,7 +18,7 @@ PASSWORD = os.getenv("PASSWORD")
 def send_email(subject, body, image_stream=None):
     # Create an SSL context
     context = ssl.create_default_context()
-    context.options |= ssl.OP_LEGACY_SERVER_CONNECT  # Enable unsafe legacy renegotiation
+    # context.options |= ssl.OP_LEGACY_SERVER_CONNECT  # Commented out
 
     # Connect to the server using the context
     server = smtplib.SMTP_SSL("mail.kurumsaleposta.com", 465, context=context)
@@ -39,8 +39,3 @@ def send_email(subject, body, image_stream=None):
 
     server.send_message(msg)
     server.quit()
-
-# Example usage
-# with open("path_to_image.png", "rb") as img_file:
-#     image_stream = io.BytesIO(img_file.read())
-# send_email("Anlık Kripto Verileri", "This is the email body", image_stream)
