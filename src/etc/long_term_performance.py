@@ -19,14 +19,14 @@ def L_term_stock():
     secilen_hisse = random.choice(stock_list)
     hisse = yf.Ticker(secilen_hisse)
     hisse_bilgileri = hisse.info
-    currency = hisse_bilgileri["financialCurrency"]
 
-    email_body = f"📈#{secilen_hisse} {hisse_bilgileri['shortName']} hisse senedinin güncel ve uzun dönemli performansı 👇\n\n"
-    anlik_fiyat = hisse_bilgileri.get('regularMarketPrice',
-                                      (hisse_bilgileri.get('open', 0) + hisse_bilgileri.get('dayHigh', 0)) / 2)
+    currency = hisse_bilgileri.get("financialCurrency", "USD")
+
+    email_body = f"📈#{secilen_hisse} {hisse_bilgileri.get('shortName', 'Hisse')} hisse senedinin güncel ve uzun dönemli performansı 👇\n\n"
+    anlik_fiyat = hisse_bilgileri.get('regularMarketPrice', (hisse_bilgileri.get('open', 0) + hisse_bilgileri.get('dayHigh', 0)) / 2)
     email_body += f"▪️ Anlık Fiyat: {duzenle(anlik_fiyat if anlik_fiyat != 0 else '', currency)}\n"
     email_body += f"▪️ 52 Haftalık En Yüksek Değer: {duzenle(hisse_bilgileri.get('fiftyTwoWeekHigh', 0), currency)}\n"
-    email_body += f"▪️ Ortalama Günlük İşlem Hacmi (Son 10 Gün): {duzenle(hisse_bilgileri.get('averageDailyVolume10Day', 'hisse'), currency)}\n"
+    email_body += f"▪️ Ortalama Günlük İşlem Hacmi (Son 10 Gün): {duzenle(hisse_bilgileri.get('averageDailyVolume10Day', 0), 'hisse')}\n"
     email_body += f"▪️ Piyasa Değeri: {duzenle(hisse_bilgileri.get('marketCap', 0), currency)}\n"
 
     end_date = datetime.now().strftime('%Y-%m-%d')
@@ -40,9 +40,9 @@ def L_term_stock():
     plt.plot(stock_data1['Close'], label='Son Fiyat')
     y_min = stock_data1['Close'].min()
     y_max = stock_data1['Close'].max()
-    y_ticks = range(int(y_min), int(y_max) + 1, 10)
+    y_ticks = range(int(y_min), int(y_max) + 1, (int((y_max - y_min) / 10) or 1))  # Adjust tick intervals dynamically
     plt.yticks(y_ticks)
-    plt.title(f'{hisse_bilgileri["shortName"]} Değişim Grafiği ')
+    plt.title(f'{hisse_bilgileri.get("shortName", secilen_hisse)} Değişim Grafiği ')
     plt.ylabel('Fiyat')
     plt.grid(True)
     plt.xticks(rotation=45)
@@ -55,7 +55,7 @@ def L_term_stock():
     image_stream.seek(0)
 
     # E-posta gönder
-    subject = f"{hisse_bilgileri['shortName']} Hissesi Performans Raporu"
+    subject = f"{hisse_bilgileri.get('shortName', secilen_hisse)} Hissesi Performans Raporu"
     send_email(subject, email_body, image_stream)
 
 if __name__ == "__main__":
