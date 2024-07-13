@@ -1,15 +1,22 @@
 {
-    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
-    "packages": [],
-    "shell": {
-      "init_hook": [
-        "echo 'Welcome to devbox!' > /dev/null"
-      ],
-      "scripts": {
-        "test": [
-          "echo \"Error: no test specified\" && exit 1"
-        ]
-      }
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
+  "packages": [
+    "python312Packages.yfinance@latest",
+    "python312Packages.matplotlib@latest",
+    "python312Packages.pytz@latest",
+    "python312Packages.beautifulsoup4@latest",
+    "python312Packages.requests@latest",
+    "python312Packages.flask@latest",
+    "python312Packages.python-dotenv@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
     }
   }
-  
+}

@@ -13,27 +13,27 @@ from src.etc.exchange_rates import currency_send
 from src.commodity.gold_price import gold_price
 from src.us.us_open_close import us_open, us_close
 from app import run
-from datetime import datetime;
+from datetime import datetime
 import pytz
 import time
 
-def main():
 
-    #crypto_send()
-    #L_term_stock()
-    #bist_sector_info(0, 26)
-    #bist_comp()
-    #bist_sector_stock_info("Gayrimenkul Yatırım Ortaklığı")
-    #halka_arz()
-    #bist30_change()
-    #bist_stock_by_time()
-    #silver()
-    #commodity_price('CL=F', 'Ham Petrol')  # Crude Oil
-    #commodity_price('HO=F', 'Kalorifer Yakıtı')  # Heating Oil
-    #commodity_price('NG=F', 'Doğal Gaz')
+def main():
+    crypto_send()
+    L_term_stock()
+    bist_sector_info(0, 26)
+    bist_comp()
+    bist_sector_stock_info("Gayrimenkul Yatırım Ortaklığı")
+    halka_arz()
+    bist30_change()
+    bist_stock_by_time()
+    silver()
+    commodity_price("CL=F", "Ham Petrol")  # Crude Oil
+    commodity_price("HO=F", "Kalorifer Yakıtı")  # Heating Oil
+    commodity_price("NG=F", "Doğal Gaz")
 
     while True:
-        tz = pytz.timezone('Europe/Istanbul')
+        tz = pytz.timezone("Europe/Istanbul")
         now = datetime.now(tz)
 
         if now.weekday() < 5 and now.hour == 10 and now.minute == 20:
@@ -121,17 +121,17 @@ def main():
             continue
 
         if now.weekday() < 5 and now.hour == 13 and now.minute == 30:
-            commodity_price('NG=F', 'Doğal Gaz')
+            commodity_price("NG=F", "Doğal Gaz")
             time.sleep(120)
             continue
 
         if now.weekday() < 5 and now.hour == 23 and now.minute == 30:
-            commodity_price('HO=F', 'Kalorifer Yakıtı')
+            commodity_price("HO=F", "Kalorifer Yakıtı")
             time.sleep(120)
             continue
 
         if now.weekday() < 5 and now.hour == 20 and now.minute == 00:
-            commodity_price('CL=F', 'Ham Petrol')
+            commodity_price("CL=F", "Ham Petrol")
             time.sleep(120)
             continue
 
