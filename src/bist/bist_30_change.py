@@ -347,22 +347,6 @@ def bist30_change():
     today_date = datetime.now(tz)
     day = today_date.strftime("%d")
     day = day[1:] if day.startswith("0") else day
-    month = today_date.strftime("%B")
-    turkish_month = {
-        "January": "Ocak",
-        "February": "Şubat",
-        "March": "Mart",
-        "April": "Nisan",
-        "May": "Mayıs",
-        "June": "Haziran",
-        "July": "Temmuz",
-        "August": "Ağustos",
-        "September": "Eylül",
-        "October": "Ekim",
-        "November": "Kasım",
-        "December": "Aralık",
-    }[month]
-
     hisse = yf.Ticker(stock_code)
     hisse_data = hisse.history(period="max")
     hisse_current = hisse.info.get("currentPrice", "0")
