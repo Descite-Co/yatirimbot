@@ -1,4 +1,4 @@
-# Yatırım Bot | @yatirimhaberi | 2024
+# Yatırım Bot | @yatirimhaberi | 2024 - main
 
 ## Install Packages
 
