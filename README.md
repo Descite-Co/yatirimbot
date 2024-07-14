@@ -11,8 +11,6 @@ Run `pip install -r requirements.txt` to install required packages.
 - bist_sector_info.py: Only works for #XUSIN, #XBANK.
 - bist_sector_stock_info.py: Error
 
-
-
 Çalışma Zamanları ve İşlevler
 
 Hafta İçi (Pazartesi - Cuma)
