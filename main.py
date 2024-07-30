@@ -19,18 +19,18 @@ import time
 
 
 def main():
-    crypto_send()
-    L_term_stock()
-    bist_sector_info(0, 26)
-    bist_comp()
-    bist_sector_stock_info("Gayrimenkul Yatırım Ortaklığı")
-    halka_arz()
-    bist30_change()
-    bist_stock_by_time()
-    silver()
-    commodity_price("CL=F", "Ham Petrol")  # Crude Oil
-    commodity_price("HO=F", "Kalorifer Yakıtı")  # Heating Oil
-    commodity_price("NG=F", "Doğal Gaz")
+    # crypto_send()
+    # L_term_stock()
+    bist_sector_info()
+    #bist_comp()
+    # bist_sector_stock_info("Gayrimenkul Yatırım Ortaklığı")
+    # halka_arz()
+    # bist30_change()
+    # bist_stock_by_time()
+    # silver()
+    # commodity_price("CL=F", "Ham Petrol")  # Crude Oil
+    # commodity_price("HO=F", "Kalorifer Yakıtı")  # Heating Oil
+    # commodity_price("NG=F", "Doğal Gaz")
 
     while True:
         tz = pytz.timezone("Europe/Istanbul")
