@@ -10,7 +10,7 @@ def bist_sector_info():
     endeksler = ["XUSIN", "XUHIZ", "XUMAL", "XUTEK", "XBANK", "XAKUR", "XBLSM", "XELKT", "XFINK", "XGMYO", "XGIDA",
                  "XHOLD", "XILTM", "XINSA", "XKAGT", "XKMYA", "XMADN", "XYORT", "XMANA", "XMESY", "XSGRT", "XSPOR",
                  "XTAST", "XTEKS", "XTCRT", "XTRZM", "XULAS"]
-    random_sectors = random.choices(endeksler, k=5)
+    random_sectors = random.sample(endeksler, 5)
     subject = "sektor_hisse_bilgi"
     body = "🔴 Borsa İstanbul Endekslerinin Bugünkü Performansları 👇\n"
 
