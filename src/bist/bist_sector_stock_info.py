@@ -45,8 +45,8 @@ def bist_sector_stock_info(day):
         except Exception as e:
             body += f"⚠️ #{stock} Veri alınırken hata: {str(e)}\n"
 
-    print(body)
-    # send_email(subject, body)
+    # print(body)
+    send_email(subject, body)
 
 if __name__ == "__main__":
     bist_sector_stock_info("Gayrimenkul Yatırım Ortaklığı")

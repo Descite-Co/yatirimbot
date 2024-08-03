@@ -11,6 +11,7 @@ load_dotenv()
 
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
+RECEIVER = os.getenv("RECEIVER")
 
 
 def send_email(subject, body, image_stream=None):
@@ -26,7 +27,7 @@ def send_email(subject, body, image_stream=None):
 
     msg = MIMEMultipart()
     msg["From"] = EMAIL
-    msg["To"] = "nattotrecrogre-8867@yopmail.com"  # Recipient address
+    msg["To"] = RECEIVER  # Recipient address
     msg["Subject"] = subject
 
     msg.attach(MIMEText(body, "plain"))
