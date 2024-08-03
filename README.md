@@ -1,6 +1,41 @@
 # Yatırım Bot | @yatirimhaberi | 2024
 
-## Start Development
+Yatırım Bot is a Python-based project designed to automate the sharing of financial updates and trading signals on Twitter. It provides timely information about market activities, including stock prices, commodities, and cryptocurrency updates, ensuring that users stay informed about critical financial events throughout the week.
+
+## Table of Contents
+
+- [Start Development Using Devbox](#start-development-using-devbox)
+  - [Configure Environment Variables](#configure-environment-variables)
+  - [Running the script](#running-the-script)
+- [Start Development Without Devbox](#start-development-without-devbox)
+  - [Install Packages](#install-packages)
+  - [Configure Environment Variables](#configure-environment-variables-1)
+  - [Run the main script](#run-the-main-script)
+- [Çalışma Zamanları ve İşlevler](#çalışma-zamanları-ve-i̇şlevler)
+  - [Hafta İçi (Pazartesi - Cuma)](#hafta-içi-pazartesi---cuma)
+  - [Hafta Sonu Dahil Her Gün](#hafta-sonu-dahil-her-gün)
+
+## Start Development Using Devbox
+
+### Configure Environment Variables
+
+`EMAIL`: Email of the sender
+
+`PASSWORD`: Password for the sender SMTP
+
+`RECEIVER`: Email for the receiver of test functions etc.
+
+### Running the script
+Install [Devbox](https://www.jetify.com/devbox/docs/installing_devbox/) if it's not already installed
+
+Open a terminal and run the following
+
+```bash
+devbox shell
+python3 main.py
+```
+
+## Start Development Without Devbox
 
 ### Install Packages
 Run `pip install -r requirements.txt` to install required packages.
@@ -12,6 +47,13 @@ Run `pip install -r requirements.txt` to install required packages.
 `PASSWORD`: Password for the sender SMTP
 
 `RECEIVER`: Email for the receiver of test functions etc.
+
+### Run the main script
+Open up a terminal and run the following command
+
+```bash
+python3 main.py
+```
 
 ## Çalışma Zamanları ve İşlevler
 
