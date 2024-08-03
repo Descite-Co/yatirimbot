@@ -1,17 +1,16 @@
 # Yatırım Bot | @yatirimhaberi | 2024
 
-## Install Packages
+## Start Development
 
+### Install Packages
 Run `pip install -r requirements.txt` to install required packages.
 
-# Project Issues and TODOs
+### Configure Environment Variables
+`EMAIL`: Email of the sender
+`PASSWORD`: Password for the sender SMTP
+`RECEIVER`: Email for the receiver of test functions etc.
 
-## bist
-
-- bist_sector_info.py: Only works for #XUSIN, #XBANK.
-- bist_sector_stock_info.py: Error
-
-Çalışma Zamanları ve İşlevler
+## Çalışma Zamanları ve İşlevler
 
 Hafta İçi (Pazartesi - Cuma)
 10:17 - BIST açılış sinyali gönderilir.
