@@ -24,6 +24,8 @@ def main():
     bist_sector_info()
     bist_comp()
     bist_sector_stock_info(datetime.now(pytz.timezone("Europe/Istanbul")).weekday())
+    us_close()
+    us_open()
     halka_arz()
     bist30_change()
     bist_stock_by_time()
