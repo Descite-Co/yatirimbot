@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: Format with black
+        entry: poetry run black src/ main.py
+        language: system
+        types: [python]
+      - id: vulture
+        name: Run vulture
+        entry: poetry run vulture . --exclude ".venv/,**/site-packages/"
+        language: system
+        types: [python]
+      - id: prospector
+        name: Run prospector
+        entry: poetry run prospector
+        language: system
+        types: [python]
