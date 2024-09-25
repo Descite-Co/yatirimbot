@@ -7,16 +7,31 @@
     "python312Packages.beautifulsoup4@latest",
     "python312Packages.requests@latest",
     "python312Packages.flask@latest",
-    "python312Packages.python-dotenv@latest"
+    "python312Packages.python-dotenv@latest",
+    "sqlite@latest",
+    "black@latest",
+    "python@latest",
+    "python310Packages.pytest@latest",
+    "safety-cli@latest",
+    "python312Packages.vulture@latest",
+    "python312Packages.schedule@latest",
+    "prospector",
+    "poetry@latest",
+    "dotenv-cli@latest"
   ],
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "echo 'Welcome to devbox!' > /dev/null",
+      "source $VENV_DIR/bin/activate",
+      "export PATH=\"$PATH:/Users/omerdduran/Applications/PyCharm Professional Edition.app/Contents/plugins/python-ce/helpers\""
     ],
     "scripts": {
       "test": [
         "echo \"Error: no test specified\" && exit 1"
       ]
     }
+  },
+  "env": {
+    "PYTHONPATH": "${PYTHONPATH}:/Users/omerdduran/Applications/PyCharm Professional Edition.app/Contents/plugins/python-ce/helpers"
   }
 }

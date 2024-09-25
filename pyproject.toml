@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "yatirimbot"
+version = "0.1.0"
+description = ""
+authors = ["Ömer Duran <me@omerduran.dev>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+yfinance = "^0.2.43"
+matplotlib = "^3.9.1"
+pytz = "^2024.1"
+beautifulsoup4 = "^4.12.3"
+requests = "^2.32.3"
+flask = "^3.0.3"
+python-dotenv = "^1.0.1"
+schedule = "^1.2.2"
+logging = "^0.4.9.6"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+pytest = "^7.4.3"
+vulture = "^2.11"
+prospector = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
