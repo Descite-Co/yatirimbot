@@ -23,6 +23,9 @@ black = "^24.4.2"
 pytest = "^7.4.3"
 vulture = "^2.11"
 prospector = "*"
+bandit = "^1.7.10"
+mypy = "^1.11.2"
+pyroma = "^4.2"
 
 [build-system]
 requires = ["poetry-core"]

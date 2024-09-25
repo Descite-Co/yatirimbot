@@ -1,0 +1,83 @@
+output-format: grouped
+
+strictness: veryhigh
+doc-warnings: true
+test-warnings: true
+member-warnings: true
+
+ignore-patterns:
+  - ^\.tox/.*
+  - ^\.venv/.*
+  - ^\.git/.*
+  - ^build/.*
+  - ^dist/.*
+
+pylint:
+  disable:
+    - bad-continuation
+    - missing-docstring
+  enable:
+    - useless-suppression
+  options:
+    max-line-length: 100
+    max-args: 5
+    max-locals: 15
+    max-returns: 6
+    max-branches: 12
+    max-statements: 50
+    max-parents: 7
+    max-attributes: 7
+    min-public-methods: 1
+    max-public-methods: 20
+
+mccabe:
+  options:
+    max-complexity: 10
+
+pycodestyle:
+  disable:
+    - E226
+    - E302
+    - E41
+  options:
+    max-line-length: 100
+
+pydocstyle:
+  disable:
+    - D203
+    - D212
+    - D213
+    - D404
+    - D406
+    - D407
+    - D408
+    - D409
+    - D413
+
+pyflakes:
+  disable:
+    - F401
+    - F403
+
+dodgy:
+  run: true
+
+vulture:
+  run: true
+
+frosted:
+  run: true
+
+mypy:
+  run: true
+  options:
+    ignore-missing-imports: true
+    follow-imports: skip
+
+bandit:
+  run: true
+  options:
+    exclude: tests
+
+pyroma:
+  run: true
