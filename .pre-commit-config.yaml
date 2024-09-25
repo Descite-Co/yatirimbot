@@ -3,16 +3,21 @@ repos:
     hooks:
       - id: black
         name: Format with black
-        entry: poetry run black src/ main.py
+        entry: black src/
+        language: system
+        types: [python]
+      - id: black
+        name: Format main file with black
+        entry: black main.py
         language: system
         types: [python]
       - id: vulture
         name: Run vulture
-        entry: poetry run vulture . --exclude ".venv/,**/site-packages/"
+        entry: vulture . --exclude ".venv/_,**/site-packages/_"
         language: system
         types: [python]
       - id: prospector
         name: Run prospector
-        entry: poetry run prospector
+        entry: prospector
         language: system
         types: [python]
