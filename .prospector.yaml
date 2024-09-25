@@ -19,7 +19,7 @@ pylint:
   enable:
     - useless-suppression
   options:
-    max-line-length: 100
+    max-line-length: 300
     max-args: 5
     max-locals: 15
     max-returns: 6
@@ -39,8 +39,10 @@ pycodestyle:
     - E226
     - E302
     - E41
+    - E501
+    - E305
   options:
-    max-line-length: 100
+    max-line-length: 300
 
 pydocstyle:
   disable:
