@@ -1,9 +1,68 @@
+"""
+This module provides functionality to fetch and send performance data for stocks within specific sectors of Borsa İstanbul (BIST).
+
+It utilizes the yfinance library to retrieve stock performance information and generates a formatted email report.
+"""
+
+import random
 import yfinance as yf
 from src.email_utils import send_email
-import random
+from src.lib.utils import get_stock_emoji_and_text
+from src.lib.constants import stocks_by_sector
+
+
+def fetch_stock_performance(stock_code):
+    """
+    Fetch the stock performance data for a given stock code.
+
+    Args:
+        stock_code (str): The stock code in the format 'SYMBOL.IS'.
+
+    Returns:
+        dict: A dictionary containing the current price,
+               day 5 close price, and any error messages if applicable.
+    """
+    stock_info = yf.Ticker(stock_code)
+
+    try:
+        stock_data = stock_info.history(period="max")
+
+        # Fetch the current price safely
+        current_price = float(stock_info.info.get("currentPrice", "0"))
+        if len(stock_data) >= 6:
+            day_5_close = stock_data["Close"].iloc[-6]
+            return {
+                "current_price": current_price,
+                "day_5_close": day_5_close,
+                "error": None,
+            }
+        return {
+            "current_price": None,
+            "day_5_close": None,
+            "error": "Yeterli veri yok",
+        }
+
+    except (ValueError, KeyError, IndexError) as error:
+        return {
+            "current_price": None,
+            "day_5_close": None,
+            "error": f"Veri alınırken hata: {str(error)}",
+        }
+    except Exception as error:  # Catch any unexpected exceptions
+        return {
+            "current_price": None,
+            "day_5_close": None,
+            "error": f"Beklenmeyen hata: {str(error)}",
+        }
 
 
 def bist_sector_stock_info(day):
+    """
+    Generate and send an email report on the performance of stocks in a specific sector of Borsa İstanbul based on the given day index.
+
+    Args:
+        day (int): Index corresponding to the desired sector in the predefined sectors list.
+    """
     sectors = [
         "Banka",
         "Aracı Kurum",
@@ -11,167 +70,35 @@ def bist_sector_stock_info(day):
         "Bilişim",
         "Gayrimenkul Yatırım Ortaklığı",
     ]
-    sektor = sectors[day]
 
-    stocks = {
-        "Banka": [
-            "AKBNK",
-            "ALBRK",
-            "GARAN",
-            "HALKB",
-            "ICBCT",
-            "ISATR",
-            "ISBTR",
-            "ISCTR",
-            "ISKUR",
-            "KLNMA",
-            "QNBFB",
-            "SKBNK",
-            "TSKB",
-            "VAKBN",
-            "YKBNK",
-        ],
-        "Aracı Kurum": [
-            "A1CAP",
-            "GEDIK",
-            "GLBMD",
-            "INFO",
-            "ISMEN",
-            "OSMEN",
-            "OYYAT",
-            "SKYMD",
-            "TERA",
-        ],
-        "Perakende Ticaret": [
-            "BIMAS",
-            "BIZIM",
-            "CASA",
-            "CRFSA",
-            "EBEBK",
-            "GMTAS",
-            "KIMMR",
-            "MAVI",
-            "MEPET",
-            "MGROS",
-            "MIPAZ",
-            "SOKM",
-            "SUWEN",
-            "TKNSA",
-            "VAKKO",
-        ],
-        "Bilişim": [
-            "ALCTL",
-            "ARDYZ",
-            "ARENA",
-            "ATATP",
-            "AZTEK",
-            "DESPC",
-            "DGATE",
-            "EDATA",
-            "ESCOM",
-            "FONET",
-            "FORTE",
-            "HTTBT",
-            "INDES",
-            "INGRM",
-            "KAREL",
-            "KFEIN",
-            "KRONT",
-            "LINK",
-            "LOGO",
-            "MANAS",
-            "MIATK",
-            "MOBTL",
-            "MTRKS",
-            "NETAS",
-            "ODINE",
-            "PAPIL",
-            "PATEK",
-            "PENTA",
-            "PKART",
-            "REEDR",
-            "SMART",
-            "VBTYZ",
-            "ASELS",
-            "SDTTR",
-        ],
-        "Gayrimenkul Yatırım Ortaklığı": [
-            "ADGYO",
-            "AGYO",
-            "AKFGY",
-            "AKMGY",
-            "AKSGY",
-            "ALGYO",
-            "ASGYO",
-            "ATAGY",
-            "AVGYO",
-            "AVPGY",
-            "BASGZ",
-            "BEGYO",
-            "DGGYO",
-            "DZGYO",
-            "EKGYO",
-            "EYGYO",
-            "FZLGY",
-            "HLGYO",
-            "IDGYO",
-            "ISGYO",
-            "KGYO",
-            "KLGYO",
-            "KRGYO",
-            "KZBGY",
-            "KZGYO",
-            "MHRGY",
-            "MRGYO",
-            "MSGYO",
-            "NUGYO",
-            "OZGYO",
-            "OZKGY",
-            "PAGYO",
-            "PEGYO",
-            "PEKGY",
-            "PSGYO",
-            "RYGYO",
-            "SEGYO",
-            "SNGYO",
-            "SRVGY",
-            "SURGY",
-            "TDGYO",
-            "TRGYO",
-            "TSGYO",
-            "VKGYO",
-            "VRGYO",
-            "YGGYO",
-            "YGYO",
-            "ZRGYO",
-        ],
-    }
+    sector = sectors[day]
+
     subject = "sektor_hisse_bilgi #crypto ##crypto"
-    body = f"""🔴 {sektor} Hisselerinin 5 Günlük Performansları 👇 
-    \n"""
-    random_stocks = random.sample(stocks[sektor], 8)
-    for stock in random_stocks:
-        stock_code = stock + ".IS"
-        stock_info = yf.Ticker(stock_code)
-        stock_data = stock_info.history(period="max")
+    body = f"🔴 {sector} Hisselerinin 5 Günlük Performansları 👇 \n\n"
+    random_stocks = random.sample(stocks_by_sector[sector], 8)
 
-        try:
-            current = float(stock_info.info.get("currentPrice", "0"))
-            if len(stock_data) >= 6:
-                day_5_close = stock_data["Close"].iloc[-6]
-                day_5_change_percent = (
-                    ((current - day_5_close) / day_5_close) * 100
-                ).round(1)
-                emo = "📈" if day_5_change_percent > 0 else "📉"
-                body += f"{emo} #{stock} {stock_info.info.get('longName', '')} %{day_5_change_percent}\n"
-            else:
-                body += f"🔍 #{stock} Yeterli veri yok\n"
-        except Exception as e:
-            body += f"⚠️ #{stock} Veri alınırken hata: {str(e)}\n"
+    for stock in random_stocks:
+        stock_code = f"{stock}.IS"
+        performance = fetch_stock_performance(stock_code)
+
+        current_price = performance["current_price"]
+        day_5_close = performance["day_5_close"]
+        error = performance["error"]
+
+        if error:
+            body += f"⚠️ #{stock} {error}\n"
+        else:
+            day_5_change_percent = ((current_price - day_5_close) / day_5_close) * 100
+            day_5_change_percent = round(day_5_change_percent, 1)
+            emo, text = get_stock_emoji_and_text(day_5_change_percent)
+            body += f"{emo} #{stock} {yf.Ticker(stock_code).info.get('longName', '')} %{day_5_change_percent} {text}\n"
+
+    body += "\n#yatırım #borsa #hisse #ekonomi #bist #bist100 #türkiye #faiz #enflasyon #endeks #finans #para #şirket"
 
     # print(body)
     send_email(subject, body)
 
 
 if __name__ == "__main__":
-    bist_sector_stock_info("Gayrimenkul Yatırım Ortaklığı")
+    # Example: Use index 4 for "Gayrimenkul Yatırım Ortaklığı"
+    bist_sector_stock_info(4)

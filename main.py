@@ -19,21 +19,33 @@ import time
 
 
 def main():
-    crypto_send()
-    L_term_stock()
-    bist_sector_info()
-    bist_comp()
-    bist_sector_stock_info(datetime.now(pytz.timezone("Europe/Istanbul")).weekday())
-    us_close()
-    us_open()
-    halka_arz()
+    # BIST Functions
     bist30_change()
+    bist_comp()
+    send_bist_open()
+    send_bist_close()
+    bist_sector_info()
+    bist_sector_stock_info(datetime.now(pytz.timezone("Europe/Istanbul")).weekday())
     bist_stock_by_time()
-    silver()
+    halka_arz()
+    
+    # Commodity Functions
     commodity_price("CL=F", "Ham Petrol")  # Crude Oil
     commodity_price("HO=F", "Kalorifer Yakıtı")  # Heating Oil
     commodity_price("NG=F", "Doğal Gaz")
+    gold_price()
+    silver()
+    
+    # Crypto Functions
+    crypto_send()
+    
+    # US Functions
+    us_close()
+    us_open()
 
+    #Other Functions
+    L_term_stock()
+    
     # while True:
     #     tz = pytz.timezone("Europe/Istanbul")
     #     now = datetime.now(tz)
