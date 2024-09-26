@@ -71,4 +71,3 @@ def get_date():
     timezone = pytz.timezone("Europe/Istanbul")
     today_date = datetime.now(timezone)
     return today_date
->>>>>>> cf6003d97362149ac9cc806d0428e261eb43439b
