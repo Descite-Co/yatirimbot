@@ -1,172 +1,60 @@
+"""
+This module performs a long-term analysis of a randomly selected stock.
+
+It fetches stock data, creates a chart, and sends an email report.
+"""
+from datetime import datetime, timedelta
+from io import BytesIO
+from secrets import randbelow
+
 import matplotlib.pyplot as plt
 import yfinance as yf
-from io import BytesIO
-import random
-from datetime import datetime, timedelta
+
 from src.email_utils import send_email
+from src.lib.constants import us_stock_list
 
-stock_list = [
-    "AAPL",
-    "MSFT",
-    "AMZN",
-    "GOOGL",
-    "FB",
-    "TSLA",
-    "BRK.A",
-    "BRK.B",
-    "JPM",
-    "JNJ",
-    "V",
-    "PG",
-    "NVDA",
-    "MA",
-    "HD",
-    "DIS",
-    "UNH",
-    "PYPL",
-    "BAC",
-    "CMCSA",
-    "XOM",
-    "INTC",
-    "ADBE",
-    "NFLX",
-    "T",
-    "CRM",
-    "ABT",
-    "CSCO",
-    "VZ",
-    "KO",
-    "MRK",
-    "PFE",
-    "PEP",
-    "WMT",
-    "CVX",
-    "MCD",
-    "TMO",
-    "WFC",
-    "ABBV",
-    "ORCL",
-    "AMGN",
-    "NKE",
-    "ACN",
-    "IBM",
-    "QCOM",
-    "TXN",
-    "COST",
-    "LLY",
-    "HON",
-    "MDT",
-    "AVGO",
-    "DHR",
-    "NEE",
-    "UPS",
-    "LIN",
-    "SBUX",
-    "LOW",
-    "UNP",
-    "BA",
-    "MO",
-    "MMM",
-    "RTX",
-    "GS",
-    "BDX",
-    "CAT",
-    "ADP",
-    "LMT",
-    "CVS",
-    "CI",
-    "DE",
-    "ANTM",
-    "SO",
-    "BMY",
-    "USB",
-    "AXP",
-    "GILD",
-    "MS",
-    "ISRG",
-    "CHTR",
-    "RTX",
-    "PLD",
-    "AEP",
-    "TGT",
-    "D",
-    "DUK",
-    "BKNG",
-    "SPGI",
-    "VRTX",
-    "ZTS",
-    "CME",
-    "COF",
-    "CSX",
-    "CCI",
-    "REGN",
-    "CL",
-]
+def format_value(value, currency):
+    """Format numerical values with currency."""
+    if value and isinstance(value, (int, float)):
+        return f"{value:, .2f} {currency}".replace(",", ".")
+    return ""
 
+def analyze_long_term_stock():
+    """Analyze a randomly selected stock and send a report via email."""
+    selected_stock = us_stock_list[randbelow(len(us_stock_list))]
+    stock = yf.Ticker(selected_stock)
+    stock_info = stock.info
+    currency = stock_info.get("financialCurrency", "USD")
 
-def duzenle(deger, para):
-    if deger != 0 and isinstance(deger, int):
-        return "{:,.0f} {}".format(deger, para).replace(",", ".")
-    elif deger != 0 and isinstance(deger, float):
-        return "{:,.2f} {}".format(deger, para).replace(",", ".")
-    else:
-        return ""
+    email_body = f"📈#{selected_stock} {stock_info.get('shortName', 'Stock')} hisse senedinin güncel ve uzun dönemli performansı 👇\n\n"
+    current_price = stock_info.get("regularMarketPrice") or (stock_info.get("open", 0) + stock_info.get("dayHigh", 0)) / 2
+    email_body += f"▪️ Anlık Fiyat: {format_value(current_price, currency)}\n"
+    email_body += f"▪️ 52 Haftalık En Yüksek Değer: {format_value(stock_info.get('fiftyTwoWeekHigh'), currency)}\n"
+    email_body += f"▪️ Ortalama Günlük İşlem Hacmi (Son 10 Gün): {format_value(stock_info.get('averageDailyVolume10Day'), 'hisse')}\n"
+    email_body += f"▪️ Piyasa Değeri: {format_value(stock_info.get('marketCap'), currency)}\n"
 
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=365)
+    stock_data = yf.download(selected_stock, start=start_date, end=end_date)
 
-def L_term_stock():
-    secilen_hisse = random.choice(stock_list)
-    hisse = yf.Ticker(secilen_hisse)
-    hisse_bilgileri = hisse.info
-
-    currency = hisse_bilgileri.get("financialCurrency", "USD")
-
-    email_body = f"📈#{secilen_hisse} {hisse_bilgileri.get('shortName', 'Hisse')} hisse senedinin güncel ve uzun dönemli performansı 👇\n\n"
-    anlik_fiyat = hisse_bilgileri.get(
-        "regularMarketPrice",
-        (hisse_bilgileri.get("open", 0) + hisse_bilgileri.get("dayHigh", 0)) / 2,
-    )
-    email_body += (
-        f"▪️ Anlık Fiyat: {duzenle(anlik_fiyat if anlik_fiyat != 0 else '', currency)}\n"
-    )
-    email_body += f"▪️ 52 Haftalık En Yüksek Değer: {duzenle(hisse_bilgileri.get('fiftyTwoWeekHigh', 0), currency)}\n"
-    email_body += f"▪️ Ortalama Günlük İşlem Hacmi (Son 10 Gün): {duzenle(hisse_bilgileri.get('averageDailyVolume10Day', 0), 'hisse')}\n"
-    email_body += (
-        f"▪️ Piyasa Değeri: {duzenle(hisse_bilgileri.get('marketCap', 0), currency)}\n"
-    )
-
-    end_date = datetime.now().strftime("%Y-%m-%d")
-    start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
-
-    # Download historical stock data for the last year
-    stock_data1 = yf.download(secilen_hisse, start=start_date, end=end_date)
-
-    # Plot historical prices
     plt.figure(figsize=(12, 6))
-    plt.plot(stock_data1["Close"], label="Son Fiyat")
-    y_min = stock_data1["Close"].min()
-    y_max = stock_data1["Close"].max()
-    y_ticks = range(
-        int(y_min), int(y_max) + 1, (int((y_max - y_min) / 10) or 1)
-    )  # Adjust tick intervals dynamically
+    plt.plot(stock_data["Close"], label="Son Fiyat")
+    y_min, y_max = stock_data["Close"].min(), stock_data["Close"].max()
+    y_ticks = range(int(y_min), int(y_max) + 1, max(1, int((y_max - y_min) / 10)))
     plt.yticks(y_ticks)
-    plt.title(f'{hisse_bilgileri.get("shortName", secilen_hisse)} Değişim Grafiği ')
+    plt.title(f'{stock_info.get("shortName", selected_stock)} Değişim Grafiği')
     plt.ylabel("Fiyat")
     plt.grid(True)
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.legend()
 
-    # Save the plot as a BytesIO object
     image_stream = BytesIO()
-    plt.savefig(
-        image_stream, format="png"
-    )  # Save the plot as PNG image to the BytesIO object
+    plt.savefig(image_stream, format="png")
     image_stream.seek(0)
 
-    # E-posta gönder
-    subject = f"{hisse_bilgileri.get('shortName', secilen_hisse)} Hissesi Performans Raporu #L_term_stock"
+    subject = f"{stock_info.get('shortName', selected_stock)} Hissesi Performans Raporu #L_term_stock"
     send_email(subject, email_body, image_stream)
 
-
 if __name__ == "__main__":
-    L_term_stock()
+    analyze_long_term_stock()
