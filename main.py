@@ -1,189 +1,65 @@
-from src.crypto.crypto_utils import crypto_send
-from src.etc.long_term_performance import L_term_stock
-from src.bist.bist_comp import bist_comp
-from src.bist.bist_sector_info import bist_sector_info
-from src.bist.bist_sector_stock_info import bist_sector_stock_info
-from src.bist.halka_arz import halka_arz
-from src.bist.bist_30_change import bist30_change
-from src.bist.bist_stock_by_time import bist_stock_by_time
-from src.commodity.silver_price import silver
-from src.commodity.commodity_price import commodity_price
-from src.bist.bist_open_close import send_bist_open, send_bist_close
-from src.etc.exchange_rates import currency_send
-from src.commodity.gold_price import gold_price
-from src.us.us_open_close import us_open, us_close
-from app import run
-from datetime import datetime
-import pytz
-import time
+"""Main script for scheduling and executing various financial tasks."""
 
+import time
+from datetime import datetime
+
+import pytz
+import schedule
+
+from src.bist.bist_30_change import bist30_change
+from src.bist.bist_comp import bist_comp
+from src.bist.bist_open_close import send_bist_open, send_bist_close
+from src.bist.bist_stock_by_time import bist_stock_by_time
+from src.bist.halka_arz import halka_arz
+from src.commodity.commodity_price import commodity_price
+from src.commodity.gold_price import gold_price
+from src.commodity.silver_price import silver
+from src.crypto.crypto_utils import crypto_send
+from src.etc.exchange_rates import currency_send
+from src.etc.long_term_performance import analyze_long_term_stock
+from src.us.us_open_close import us_open, us_close
+
+def is_weekday():
+    """Check if the current day is a weekday."""
+    return datetime.now(pytz.timezone("Europe/Istanbul")).weekday() < 5
+
+# Daily tasks
+schedule.every().day.at("06:30", "Europe/Istanbul").do(crypto_send)
+schedule.every().day.at("11:00", "Europe/Istanbul").do(bist_stock_by_time)
+schedule.every().day.at("15:00", "Europe/Istanbul").do(bist_stock_by_time)
+schedule.every().day.at("17:30", "Europe/Istanbul").do(analyze_long_term_stock)
+schedule.every().day.at("19:00", "Europe/Istanbul").do(bist_stock_by_time)
+schedule.every().day.at("23:49", "Europe/Istanbul").do(analyze_long_term_stock)
+
+# Weekday tasks
+schedule.every().day.at("10:17", "Europe/Istanbul").do(send_bist_open).tag("weekday")
+schedule.every().day.at("10:20", "Europe/Istanbul").do(halka_arz).tag("weekday")
+schedule.every().day.at("10:30", "Europe/Istanbul").do(gold_price).tag("weekday")
+schedule.every().day.at("11:30", "Europe/Istanbul").do(silver).tag("weekday")
+schedule.every().day.at("12:30", "Europe/Istanbul").do(currency_send).tag("weekday")
+schedule.every().day.at("13:30", "Europe/Istanbul").do(lambda: commodity_price("NG=F", "Doğal Gaz")).tag("weekday")
+schedule.every().day.at("16:00", "Europe/Istanbul").do(bist30_change).tag("weekday")
+schedule.every().day.at("16:30", "Europe/Istanbul").do(gold_price).tag("weekday")
+schedule.every().day.at("16:46", "Europe/Istanbul").do(us_open).tag("weekday")
+schedule.every().day.at("18:00", "Europe/Istanbul").do(crypto_send).tag("weekday")
+schedule.every().day.at("18:17", "Europe/Istanbul").do(send_bist_close).tag("weekday")
+schedule.every().day.at("19:30", "Europe/Istanbul").do(bist30_change).tag("weekday")
+schedule.every().day.at("20:00", "Europe/Istanbul").do(lambda: commodity_price("CL=F", "Ham Petrol")).tag("weekday")
+schedule.every().day.at("20:30", "Europe/Istanbul").do(bist30_change).tag("weekday")
+schedule.every().day.at("22:16", "Europe/Istanbul").do(bist_comp).tag("weekday")
+schedule.every().day.at("23:16", "Europe/Istanbul").do(us_close).tag("weekday")
+schedule.every().day.at("23:30", "Europe/Istanbul").do(lambda: commodity_price("HO=F", "Kalorifer Yakıtı")).tag("weekday")
 
 def main():
-    # BIST Functions
-    bist30_change()
-    bist_comp()
-    send_bist_open()
-    send_bist_close()
-    bist_sector_info()
-    bist_sector_stock_info(datetime.now(pytz.timezone("Europe/Istanbul")).weekday())
-    bist_stock_by_time()
-    halka_arz()
+    """Run the main scheduling loop."""
+    # Run weekday jobs only on weekdays
+    for job in schedule.get_jobs():
+        if "weekday" in job.tags:
+            job.run = lambda job=job: job() if is_weekday() else None
     
-    # Commodity Functions
-    commodity_price("CL=F", "Ham Petrol")  # Crude Oil
-    commodity_price("HO=F", "Kalorifer Yakıtı")  # Heating Oil
-    commodity_price("NG=F", "Doğal Gaz")
-    gold_price()
-    silver()
-    
-    # Crypto Functions
-    crypto_send()
-    
-    # US Functions
-    us_close()
-    us_open()
-
-    #Other Functions
-    L_term_stock()
-    
-    # while True:
-    #     tz = pytz.timezone("Europe/Istanbul")
-    #     now = datetime.now(tz)
-
-    #     if now.weekday() < 7 and now.hour == 6 and now.minute == 30:
-    #         crypto_send()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 10 and now.minute == 17:
-    #         send_bist_open()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 10 and now.minute == 20:
-    #         halka_arz()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 10 and now.minute == 30:
-    #         gold_price()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 7 and now.hour == 11 and now.minute == 00:
-    #         bist_stock_by_time()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 11 and now.minute == 30:
-    #         silver()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 12 and now.minute == 30:
-    #         currency_send()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 13 and now.minute == 30:
-    #         commodity_price("NG=F", "Doğal Gaz")
-    #         time.sleep(120)
-    #         continue
-
-    #     # if now.weekday() < 5 and now.hour == 14 and now.minute == 30:
-    #     #     bist_sector_info()
-    #     #     time.sleep(120)
-    #     #     continue
-
-    #     if now.weekday() < 7 and now.hour == 15 and now.minute == 00:
-    #         bist_stock_by_time()
-    #         time.sleep(120)
-    #         continue
-
-    #     # if now.weekday() < 7 and now.hour == 15 and now.minute == 30:
-    #     #     bist_sector_stock_info(now.weekday())
-    #     #     time.sleep(120)
-    #     #     continue
-
-    #     if now.weekday() < 5 and now.hour == 16 and now.minute == 00:
-    #         bist30_change()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 16 and now.minute == 30:
-    #         gold_price()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 16 and now.minute == 46:
-    #         us_open()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 7 and now.hour == 17 and now.minute == 30:
-    #         L_term_stock()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 18 and now.minute == 00:
-    #         crypto_send()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 18 and now.minute == 17:
-    #         send_bist_close()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 19 and now.minute == 30:
-    #         bist30_change()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 7 and now.hour == 19 and now.minute == 00:
-    #         bist_stock_by_time()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 20 and now.minute == 00:
-    #         commodity_price("CL=F", "Ham Petrol")
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 20 and now.minute == 30:
-    #         bist30_change()
-    #         time.sleep(120)
-    #         continue
-
-    #     # if now.weekday() < 5 and now.hour == 21 and now.minute == 30:
-    #     #     bist_sector_info()
-    #     #     time.sleep(120)
-    #     #     continue
-
-    #     if now.weekday() < 5 and now.hour == 22 and now.minute == 16:
-    #         bist_comp()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 23 and now.minute == 16:
-    #         us_close()
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 5 and now.hour == 23 and now.minute == 30:
-    #         commodity_price("HO=F", "Kalorifer Yakıtı")
-    #         time.sleep(120)
-    #         continue
-
-    #     if now.weekday() < 7 and now.hour == 23 and now.minute == 49:
-    #         L_term_stock()
-    #         time.sleep(120)
-    #         continue
-
-    #     else:
-    #         time.sleep(1)
-    #         continue
-
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
