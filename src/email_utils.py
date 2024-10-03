@@ -1,10 +1,13 @@
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from dotenv import load_dotenv
+"""Utility module for sending emails with optional image attachments."""
+
 import os
 import ssl
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+
+from dotenv import load_dotenv
 
 # Adding environment variables
 load_dotenv()
@@ -14,35 +17,39 @@ PASSWORD = os.getenv("PASSWORD")
 RECEIVER = os.getenv("RECEIVER")
 
 
-def send_email(subject, body, image_stream=None):
+def send_email(subject: str, body: str, image_stream=None):
+    """
+    Send an email with an optional image attachment.
+
+    Args:
+        subject (str): The subject of the email.
+        body (str): The body content of the email.
+        image_stream (BytesIO, optional): A BytesIO stream containing the image data.
+
+    Raises:
+        smtplib.SMTPException: If there's an error sending the email.
+    """
     # Create an SSL context
     context = ssl.create_default_context()
-    context.options |= (
-        ssl.OP_LEGACY_SERVER_CONNECT
-    )  # Enable unsafe legacy renegotiation
 
     # Connect to the server using the context
-    server = smtplib.SMTP_SSL("mail.kurumsaleposta.com", 465, context=context)
-    server.login(EMAIL, PASSWORD)
+    with smtplib.SMTP_SSL("mail.kurumsaleposta.com", 465, context=context) as server:
+        server.login(EMAIL, PASSWORD)
 
-    msg = MIMEMultipart()
-    msg["From"] = EMAIL
-    msg["To"] = RECEIVER  # Recipient address
-    msg["Subject"] = subject
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL
+        msg["To"] = RECEIVER
+        msg["Subject"] = subject
 
-    msg.attach(MIMEText(body, "plain"))
+        msg.attach(MIMEText(body, "plain"))
 
-    # Attach image if available
-    if image_stream:
-        image = MIMEImage(image_stream.getvalue())
-        image.add_header("Content-Disposition", "attachment", filename="image.png")
-        msg.attach(image)
+        # Attach image if available
+        if image_stream:
+            image = MIMEImage(image_stream.getvalue())
+            image.add_header("Content-Disposition", "attachment", filename="image.png")
+            msg.attach(image)
 
-    server.send_message(msg)
-    server.quit()
-
+        server.send_message(msg)
 
 # Example usage
-# with open("path_to_image.png", "rb") as img_file:
-#     image_stream = io.BytesIO(img_file.read())
 # send_email("Anlık Kripto Verileri", "This is the email body", image_stream)

@@ -3,19 +3,16 @@ This module provides functions to fetch and send BIST100 (Istanbul Stock Exchang
 
 It uses the yfinance library to fetch stock data and the matplotlib library to generate a 7-day graph.
 """
-
 from datetime import datetime, timedelta
 import yfinance as yf
 from io import BytesIO
 from matplotlib import pyplot as plt
 from src.email_utils import send_email
-from src.lib.utils import get_date
-from src.lib.utils import get_turkish_month
-from src.lib.utils import get_stock_emoji_and_text
+from src.lib.utils import get_date, get_turkish_month, get_stock_emoji_and_text
 
 
 def generate_bist_graph():
-    """Generate a 7 day graph with 3 hour intervals for BIST100 Stock Exchange."""
+    """Generate a 7-day graph with 3 hour intervals for BIST100 Stock Exchange."""
     end_date = datetime.today().strftime("%Y-%m-%d")
     start_date = (datetime.today() - timedelta(days=7)).strftime("%Y-%m-%d")
     stock_data = yf.download("XU100.IS", start=start_date, end=end_date, interval="15m")

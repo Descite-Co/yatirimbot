@@ -1,3 +1,4 @@
+"""Package for constants."""
 bist_all = [
     "ACSEL",
     "ADEL",
