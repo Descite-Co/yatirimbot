@@ -13,7 +13,7 @@ from src.bist.bist_stock_by_time import bist_stock_by_time
 from src.bist.halka_arz import halka_arz
 from src.commodity.commodity_price import commodity_price
 from src.commodity.gold_price import gold_price
-from src.commodity.silver_price import silver
+from src.commodity.silver_price import analyze_silver_prices
 from src.crypto.crypto_utils import crypto_send
 from src.etc.exchange_rates import currency_send
 from src.etc.long_term_performance import analyze_long_term_stock
@@ -35,7 +35,7 @@ schedule.every().day.at("23:49", "Europe/Istanbul").do(analyze_long_term_stock)
 schedule.every().day.at("10:17", "Europe/Istanbul").do(send_bist_open).tag("weekday")
 schedule.every().day.at("10:20", "Europe/Istanbul").do(halka_arz).tag("weekday")
 schedule.every().day.at("10:30", "Europe/Istanbul").do(gold_price).tag("weekday")
-schedule.every().day.at("11:30", "Europe/Istanbul").do(silver).tag("weekday")
+schedule.every().day.at("11:30", "Europe/Istanbul").do(analyze_silver_prices).tag("weekday")
 schedule.every().day.at("12:30", "Europe/Istanbul").do(currency_send).tag("weekday")
 schedule.every().day.at("13:30", "Europe/Istanbul").do(lambda: commodity_price("NG=F", "Doğal Gaz")).tag("weekday")
 schedule.every().day.at("16:00", "Europe/Istanbul").do(bist30_change).tag("weekday")
@@ -56,7 +56,7 @@ def main():
     for job in schedule.get_jobs():
         if "weekday" in job.tags:
             job.run = lambda job=job: job() if is_weekday() else None
-    
+
     while True:
         schedule.run_pending()
         time.sleep(1)

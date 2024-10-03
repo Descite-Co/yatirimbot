@@ -1,54 +1,61 @@
+"""
+This module retrieves stock information for Turkish companies and sends an email summary.
+
+It uses the yfinance library to fetch stock data and a custom email utility to send the report.
+"""
+
 from datetime import datetime
 import pytz
 import yfinance as yf
 from src.email_utils import send_email
+from src.lib.utils import get_turkish_month
+
+def format_day(day):
+    """Remove leading zero from day if present."""
+    return day[1:] if day.startswith("0") else day
+
+
+def get_stock_data(stock_code):
+    """Retrieve stock data for a given stock code."""
+    hisse = yf.Ticker(stock_code + ".IS")
+    hisse_data = hisse.history(period="max")
+    hisse_close_list = hisse_data["Close"][-3:].tolist()
+    return hisse_close_list
+
+
+def calculate_change(current, previous):
+    """Calculate percentage change between two values."""
+    return round(((current - previous) / previous) * 100, 2)
 
 
 def halka_arz():
-    tz = pytz.timezone("Europe/Istanbul")
-    today_date = datetime.now(tz)
-    day = today_date.strftime("%d")
-    day = (
-        day[1:] if day.startswith("0") else day
-    )  # BUNU HER DAY KULLANILAN YERDE KULLANALIM
-    month = today_date.strftime("%B")
-    turkish_month = {
-        "January": "Ocak",
-        "February": "Şubat",
-        "March": "Mart",
-        "April": "Nisan",
-        "May": "Mayıs",
-        "June": "Haziran",
-        "July": "Temmuz",
-        "August": "Ağustos",
-        "September": "Eylül",
-        "October": "Ekim",
-        "November": "Kasım",
-        "December": "Aralık",
-    }[month]
+    """
+    Generate and send a daily report on Turkish stock performance.
+
+    This function retrieves stock data for specified Turkish companies,
+    calculates their daily performance, and sends an email summary.
+    """
+    timezone = pytz.timezone("Europe/Istanbul")
+    today_date = datetime.now(timezone)
+    day = format_day(today_date.strftime("%d"))
+    month = get_turkish_month(today_date.strftime("%B"))
+
     stocks = ["RGYAS", "ODINE", "MOGAN", "ARTMS", "ALVES", "LMKDC"]
-    change_rates = []
-    stock_prices = []
     subject = "halka_arz_tablosu #test ##test"
-    body = f"""🔴 {day} {turkish_month} Halka Arz Tablosu \n
-"""
-    for stock in stocks[::-1]:
-        stock_code = stock + ".IS"
-        hisse = yf.Ticker(stock_code)
-        hisse_data = hisse.history(period="max")
-        hisse_close_list = hisse_data["Close"][-3:].tolist()
-        print(hisse_close_list)
-        hisse_current = hisse_close_list[2]
-        hisse_prev = hisse_close_list[1]
-        hisse_current_change = ((hisse_current - hisse_prev) / hisse_prev) * 100
-        hisse_current_change = round(hisse_current_change, 2)
-        change_rates.append(hisse_current_change)
-        stock_prices.append(hisse_current)
-        emo = "📈" if hisse_current_change > 0 else "📉"
-        text = "yükseldi" if hisse_current_change > 0 else "düştü"
-        tavan_check = " - Hisse Tavanda" if hisse_current_change > 9.5 else ""
-        message = f"{emo} #{stock} bugün %{hisse_current_change} {text}"
-        body += f"{message + tavan_check}\n"
+    body = f"🔴 {day} {month} Halka Arz Tablosu \n\n"
+
+    for stock in reversed(stocks):
+        hisse_close_list = get_stock_data(stock)
+        hisse_current, hisse_prev = hisse_close_list[2], hisse_close_list[1]
+        change_rate = calculate_change(hisse_current, hisse_prev)
+
+        emoji = "📈" if change_rate > 0 else "📉"
+        text = "yükseldi" if change_rate > 0 else "düştü"
+        tavan_check = " - Hisse Tavanda" if change_rate > 9.5 else ""
+
+        message = f"{emoji} #{stock} bugün %{change_rate} {text}{tavan_check}\n"
+        body += message
+
     send_email(subject, body)
 
 

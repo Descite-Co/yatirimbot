@@ -1,8 +1,5 @@
 {
-  "packages": [
-    "python@3.12",
-    "poetry@latest"
-  ],
+  "packages": ["python@3.12", "poetry@latest"],
   "shell": {
     "init_hook": [
       "echo 'Welcome to devbox!' > /dev/null",

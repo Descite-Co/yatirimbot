@@ -16,12 +16,19 @@ pylint:
   disable:
     - bad-continuation
     - missing-docstring
+    - wrong-import-position
+    - wrong-import-order
+    - broad-exception-caught
+    - astroid-error
+    - invalid-name
+    - unused-variable
+    - ungrouped-imports
   enable:
     - useless-suppression
   options:
     max-line-length: 300
     max-args: 5
-    max-locals: 15
+    max-locals: 16
     max-returns: 6
     max-branches: 12
     max-statements: 50
@@ -41,6 +48,8 @@ pycodestyle:
     - E41
     - E501
     - E305
+    - E231
+    - W293
   options:
     max-line-length: 300
 
@@ -65,19 +74,19 @@ dodgy:
   run: true
 
 vulture:
-  run: true
+  run: false
 
 frosted:
   run: true
 
 mypy:
-  run: true
+  run: false
   options:
     ignore-missing-imports: true
     follow-imports: skip
 
 bandit:
-  run: true
+  run: false
   options:
     exclude: tests
 

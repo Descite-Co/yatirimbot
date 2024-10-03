@@ -48,7 +48,7 @@ def fetch_stock_performance(stock_code):
             "day_5_close": None,
             "error": f"Veri alınırken hata: {str(error)}",
         }
-    except Exception as error:  # Catch any unexpected exceptions
+    except Exception as error:
         return {
             "current_price": None,
             "day_5_close": None,

@@ -57,9 +57,9 @@ def crypto_send() -> None:
         "ETH": ["https://cryptoprices.cc/ETH/", "https://cryptoprices.cc/ETH/MCAP/"],
         "SOL": ["https://cryptoprices.cc/SOL/", "https://cryptoprices.cc/SOL/MCAP/"],
     }
-    
+
     body = "🚀 Anlık Kripto Verileri 🚀\n"
-    
+
     for crypto, urls in cryptos.items():
         price, market_cap = map(get_crypto_price, urls)
         if price and market_cap:
@@ -67,7 +67,7 @@ def crypto_send() -> None:
             formatted_market_cap = format_market_cap(float(market_cap))
             body += f"\n🌟 #{crypto} Fiyatı: ${formatted_price}\n"
             body += f"💰 #{crypto} Piyasa Değeri: {formatted_market_cap}\n"
-    
+
     image_stream = plot_bitcoin_graph()
     send_email("Anlık Kripto Verileri #crypto_send", body, image_stream)
 
