@@ -66,3 +66,4 @@ def gold_price():
 
 if __name__ == "__main__":
     gold_price()
+    logger.info('Gold Price Function Worked')
