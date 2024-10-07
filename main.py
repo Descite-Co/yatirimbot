@@ -2,7 +2,7 @@
 
 import time
 from datetime import datetime
-
+import logging
 import pytz
 import schedule
 
@@ -18,6 +18,9 @@ from src.crypto.crypto_utils import crypto_send
 from src.etc.exchange_rates import currency_send
 from src.etc.long_term_performance import analyze_long_term_stock
 from src.us.us_open_close import us_open, us_close
+
+formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s")
+logger = logging.getLogger(__name__)
 
 def is_weekday():
     """Check if the current day is a weekday."""
@@ -52,6 +55,9 @@ schedule.every().day.at("23:30", "Europe/Istanbul").do(lambda: commodity_price("
 
 def main():
     """Run the main scheduling loop."""
+    logging.basicConfig(filename='myapp.log', level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    logger.info('Script Running')
     # Run weekday jobs only on weekdays
     for job in schedule.get_jobs():
         if "weekday" in job.tags:
@@ -63,3 +69,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

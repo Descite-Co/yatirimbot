@@ -1217,6 +1217,16 @@ files = [
 ]
 
 [[package]]
+name = "mylib"
+version = "0.0.1"
+description = "just a simple test"
+optional = false
+python-versions = "*"
+files = [
+    {file = "mylib-0.0.1.tar.gz", hash = "sha256:0e4f96f4800500ad3a7c9e7cbfe44c36e8535a5360b6fe55478e5e677060824f"},
+]
+
+[[package]]
 name = "mypy"
 version = "1.11.2"
 description = "Optional static typing for Python"
@@ -2342,4 +2352,4 @@ repair = ["scipy (>=1.6.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "19bf978598278394d0ee6433e0d93a5f00f5841ad0f53b9f3a161731ac46d9c0"
+content-hash = "77bec0ccfeddfd6f70c0e5bae2bf1e147d3abf971396eebb41151c0f7c83fd04"
